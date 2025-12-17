@@ -11,6 +11,7 @@ namespace EjercicioASP.NET2023
         protected void Page_Load(object sender, EventArgs e)
         {
             Error.Text = "";
+            LeerDatos();
         }
         SqlConnection conexion = new SqlConnection(ConfigurationManager.ConnectionStrings["conexionD"].ConnectionString);
 
@@ -33,15 +34,25 @@ namespace EjercicioASP.NET2023
             int usuario = Convert.ToInt32(cmd.ExecuteScalar());
             if (usuario < 1)
             {
-                SqlCommand command = new SqlCommand("INSERT INTO Usuarios (Nombre, Email, Contrasenia) values('"+Name.Text+ "','"+Email.Text+ "','"+Password.Text+"')", conexion);
+                SqlCommand command = new SqlCommand("INSERT INTO Usuarios (Nombre, Email, Contrasenia) values('" + Name.Text + "','" + Email.Text + "','" + Password.Text + "')", conexion);
                 command.ExecuteNonQuery();
                 conexion.Close();
                 Limpiar();
+                LeerDatos();
             }
             else 
             {
                 Error.Text = "El Email ya existe";
             }
+        }
+        void LeerDatos() 
+        {
+            SqlCommand Leer = new SqlCommand("SELECT * FROM Usuarios",conexion);
+            SqlDataAdapter data = new SqlDataAdapter(Leer);
+            DataTable table = new DataTable();
+            data.Fill(table);
+            RUsuarios.DataSource = table;
+            RUsuarios.DataBind();
         }
     }
 }
